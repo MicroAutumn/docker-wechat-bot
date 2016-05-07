@@ -6,6 +6,8 @@ var Client = require('./lib/Client');
 var async = require('async');
 var log = require('./lib/log');
 var dockerPlugin = require('./lib/plugin/Docker');
+var qrcode = require('qrcode-terminal');
+
 Client.plugins = Client.plugins || [];
 Client.plugins.push(dockerPlugin);
 async.forever((next) => {
@@ -14,6 +16,10 @@ async.forever((next) => {
             Client.qrcode((err) => {
                 if (err) return next(err);
                 log.info('二维码地址:'　+　Client.qrcodeImage);
+                qrcode.generate(Client.qrcodeImageUrl, function (qrcode) {
+                    log.info('\r\n' + qrcode);
+                    log.info('扫描二维码登录微信');
+                });
                 next();
             });
         },
